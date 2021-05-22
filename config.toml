@@ -1,4 +1,27 @@
-baseURL = "http://example.org/"
+baseURL = "https://ketansingh.me"
 languageCode = "en-us"
-title = "My New Hugo Site"
-theme = "hugo-tania"
+title = "Ketan Singh"
+theme = "ezhil"
+copyright = "© ketansingh.me"
+pygmentsstyle = "solarized-dark"
+pygmentscodefences = true
+pygmentscodefencesguesssyntax = true
+
+googleAnalytics = "G-8HQBGC6R6T"
+disqusShortname = "ketansingh-me"
+
+[params]
+	mode = "dark"
+	subtitle = "Collection of musing and ramblings"
+	scheme = "light" # light, dark, gray or preference
+	description = " library of musings and ramblings"
+	featherIconsCDN = true
+
+[[params.social]]
+name = "Github"
+icon = "github"
+url = "https://github.com/spl0i7"
+
+
+[taxonomies]
+   tag = "tags"
