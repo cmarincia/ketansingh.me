@@ -22,6 +22,12 @@ name = "Github"
 icon = "github"
 url = "https://github.com/spl0i7"
 
+[[params.social]]
+name = "Mail"
+icon = "mail"
+url = "mailto:a2V0YW5zaW5naC5zaEBnbWFpbC5jb20="
+
+
 
 [taxonomies]
    tag = "tags"
