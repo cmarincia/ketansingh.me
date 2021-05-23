@@ -67,7 +67,8 @@ func processTasks() {
 
 func requestAPI(i int) error {
 	var err error
-	resp, err := http.Get("https://jsonplaceholder.typicode.com/todos/" + fmt.Sprint(i))
+	url := fmt.Sprintf("https://jsonplaceholder.typicode.com/todos/%d", i)
+	resp, err := http.Get(url)
 	if err != nil {
 		return err
 	}
