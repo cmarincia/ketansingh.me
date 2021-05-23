@@ -3,11 +3,9 @@ languageCode = "en-us"
 title = "Ketan Singh"
 theme = "ezhil"
 copyright = "© ketansingh.me"
-pygmentsstyle = "solarized-dark"
+pygmentsstyle = "solarized-light"
 pygmentscodefences = true
 pygmentscodefencesguesssyntax = true
-
-googleAnalytics = "G-8HQBGC6R6T"
 disqusShortname = "ketansingh-me"
 
 [params]
@@ -16,6 +14,8 @@ disqusShortname = "ketansingh-me"
 	scheme = "light" # light, dark, gray or preference
 	description = " library of musings and ramblings"
 	featherIconsCDN = true
+	googleAnalyticsID = "G-8HQBGC6R6T"
+
 
 [[params.social]]
 name = "Github"
