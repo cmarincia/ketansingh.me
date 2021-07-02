@@ -4,8 +4,9 @@ date: 2021-07-02T09:36:46+05:30
 description: "yet another concurrency pattern in go"
 ---
 
+I am going to divide this post into two parts, In the first part I will try to explain basic building blocks of pipelines and in second post I will try to build a general purpose library around this design.
+
 I was recently reading [Concurrency In Go](https://learning.oreilly.com/library/view/concurrency-in-go/9781491941294/) and came across something called as pipeline processing pattern. Idea is you can break a logical functionality into stages. Each stage does its own processing and passes the output to the next stage to get processed. You can modify stages independent of one another, rate limit the stages and so on and forth.
-I am going to divide this post into two parts, In the first part I will try to explain basic building blocks of pipelines and in second post I will try to build a general purpose library around this design.  
 
 ## Pipeline basics
 
@@ -13,7 +14,6 @@ Consider these two functions
 
 ```go
 func Multiply(value ,multiplier int) int { 
-
 	return value*multiplier
 }
 ```
@@ -24,7 +24,7 @@ func Add(value,additive int) int {
 }
 ```
 
-What these function do is very simple, They just perform the arithmetic operation on number with a constant and return it. You can think of these as "stages" of pipeline. To complete the pipeline we can just combine both stages them.
+What these function do is very simple, They just perform the arithmetic operation on number with a constant and return it. You can think of these as "stages" of pipeline. To complete the pipeline we can just combine both stages.
 
 ```go
 
@@ -36,7 +36,7 @@ for _,v := range ints {
 
 ```
 
-We can observe here that stage consumes the input, processes it and returns the same type for further stages.
+We can observe here that stage consumes the input, processes it and returns the same type for further stage processing.
 
 
 ## Concurrent Pipelines
@@ -74,7 +74,7 @@ func generator(done <-chan interface{}, integers ...int) <-chan int {
 This function simply spawns a goroutine which tries to produce values on a channel, and the function simply returns that channels. Values generated on this channel serves as the input for further stages. We're also passing done channel in the function to gracefully exit the generation, this is also known as [Poison Pill Pattern](https://java-design-patterns.com/patterns/poison-pill/)
 
 
-Extending the same idea, we can rewrite multiply and add function to do the processing asynchronously.
+Extending the same idea, we can rewrite multiply and add function to do the processing concurrently.
 
 
 ```go
@@ -126,7 +126,7 @@ In order to build pipelines we can combine these stages of pipelines as
 	}
 ```
 
-This piece of code will run stages concurrently in different pipes, keep passing their result to next stage via go channels. We can get the final results by reading stage's channel. 
+This piece of code will run stages concurrently in different pipes, keep passing their result to next stage via go channels. We can get the final results by reading last stage's channel. 
 
 
 ## More practical use case
