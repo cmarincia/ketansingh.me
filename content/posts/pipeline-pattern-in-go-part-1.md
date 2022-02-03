@@ -101,7 +101,7 @@ func add(done <-chan interface{}, intStream <-chan int, adder int) chan int {
 		for i := range intStream {
 			select {
 			case <-done:return
-			case addedStream <- i * adder:
+			case addedStream <- i + adder:
 			}
 		}
 	}()
