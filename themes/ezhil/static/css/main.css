@@ -414,3 +414,10 @@ table th, table td {
         margin-top: 10px;
     }
 }
+
+code {
+	padding: 0px 2px 2px;
+	border: 1px solid #DDD;
+	border-radius: 3px;	
+}
+
