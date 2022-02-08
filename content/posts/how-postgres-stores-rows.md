@@ -29,29 +29,17 @@ Pages themselves are organized in a layout something like following:
 
 **page header** itself is not that interesting, it just contains book-keeping stuff related a page including lower and upper pointer. It's structure looks like this:
 
-```markdown
 
 | field               | size    | description                                                               |
-
 |---------------------|---------|---------------------------------------------------------------------------|
-
 | pd_lsn              | 8 bytes | LSN: next byte after last byte of WAL record for last change to this page |
-
 | pd_checksum         | 2 bytes | Page checksum                                                             |
-
 | pd_flags            | 2 bytes | Flag bits                                                                 |
-
 | pd_lower            | 2 bytes | Offset to start of free space                                             |
-
 | pd_upper            | 2 bytes | Offset to end of free space                                               |
-
 | pd_special          | 2 bytes | Offset to start of special space                                          |
-
 | pd_pagesize_version | 2 bytes | Page size and layout version number information                           |
-
 | pd_prune_xid        | 4 bytes | Oldest unpruned XMAX on page, or zero if none                             |
-
-```
 
 Now, this method of storage has few implications. 
 
