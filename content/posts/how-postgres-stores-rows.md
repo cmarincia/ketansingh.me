@@ -9,7 +9,7 @@ Out of curiosity, I was trying to understand how PostgreSQL stores the data onto
 
 Just to be clear, PostgreSQL stores a lot of files on disk such as transaction commit data, subtransaction status data, write ahead logs (WAL), etc. I will only be exploring heap files. Now what the heck is a heap file? A heap file is just a file of records. Note that the heap file has got nothing to do with heap memory. Although their use case is very similar, which is storing dynamic data.
 
-## How are rows are organized in files?
+## How rows are organized in files?
 
 PostgreSQL stores the actual data into segment files (more generally called heap files). Typically its fixed to 1GB size but you can configure that at compile time using `--with-segsize`. When a table or index exceeds 1 GB, it is divided into gigabyte-sized _segments_. This arrangement avoids problems on platforms that have file size limitations but 1GB is very conservative choice for any modern platform.
 
