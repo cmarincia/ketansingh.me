@@ -6,7 +6,7 @@ copyright = "© ketansingh.me"
 pygmentsstyle = "solarized-light"
 pygmentscodefences = true
 pygmentscodefencesguesssyntax = true
-disqusShortname = "ketansingh-me"
+# disqusShortname = "ketansingh-me"
 
 [params]
 	mode = "dark"
