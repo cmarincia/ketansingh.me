@@ -121,7 +121,7 @@ Bingo! Lost data was recovered back. 
 
 ## Closing Thoughts
 
-I think doing failover manually can be tricky because all it takes is a one rouge command to ruin everything. There are various ways to do this automatically such as  [percona-xtradb-cluster](https://www.percona.com/doc/percona-xtradb-cluster/LATEST/manual/failover.html), [orchestrator](https://github.com/openark/orchestrator/blob/master/docs/topology-recovery.md) or even a managed database from your favourite cloud provider. So If you're reading this and you still do manual failovers please consider automating it.
+I think doing failover manually can be tricky because all it takes is a one rogue command to ruin everything. There are various ways to do this automatically such as  [percona-xtradb-cluster](https://www.percona.com/doc/percona-xtradb-cluster/LATEST/manual/failover.html), [orchestrator](https://github.com/openark/orchestrator/blob/master/docs/topology-recovery.md) or even a managed database from your favourite cloud provider. So If you're reading this and you still do manual failovers please consider automating it.
 
 
 
