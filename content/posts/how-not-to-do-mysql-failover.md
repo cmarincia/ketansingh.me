@@ -111,7 +111,7 @@ I ran the following command on old leader and hoped that it should restore the d
 
 ```SQL
 
-$ mysqlbinlog -j 4512 mysql-bin-1.000004  | mysql -h <old_leader> -uroot -p
+$ mysqlbinlog -j 4512 mysql-bin-1.000004  | mysql -h <new_leader> -uroot -p
 
 ```
 
