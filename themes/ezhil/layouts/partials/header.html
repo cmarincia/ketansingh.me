@@ -6,7 +6,7 @@
 	{{- if .IsHome -}}
 	<title>{{ $siteTitle }} {{ if isset .Site.Params "subtitle" }}- {{ .Site.Params.Subtitle }}{{ end }} </title>
 	{{- else -}}
-	<title>{{ $title }} - {{ $siteTitle }}</title>
+	<title>{{ $title }} </title>
 	{{- end -}}
 
 	{{- if isset .Site.Params "favicon" -}}
