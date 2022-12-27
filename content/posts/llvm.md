@@ -16,7 +16,7 @@ Typical compiler design includes
 
 - **Backend** - Generate the final output depending on the compilation target (os, architecture, etc)
 
-This design has a advantage that each of these steps can be implemented independently of each other. For example we can write different frontend for different programming languages which all output same intermediate representation. Optimizer can be designed in such a way that it optimizes only IR which is going to be same for all the language. Similarly backend can be designed to operate on IR as input and output code which is dependent on target. This way we end up reusing different part of compiler for different programming languages without having to start from scratch for every new compiler. 
+This design has the advantage that each of these steps can be implemented independently of each other. For example, we can write different frontends for different programming languages which all output the same intermediate representation. Optimizer can be designed in such a way that it optimizes only IR which is going to be the same for all the languages. Similarly, backend can be designed to operate on IR as input and output code which is dependent on target. This way we end up reusing different parts of the compiler for different programming languages without having to start from scratch for every new compiler. 
 
 This is kind of how LLVM is designed. Frontend parses the source into LLVM IR, IR is fed through optimizer(s) which is then fed into code generator to generate target output. IR is thus the interface to the LLVM compiler framework. This property means that all you need to know to write a front end for LLVM is IR and LLVM tools can then take over to build the final executable.
 
@@ -24,7 +24,7 @@ This is kind of how LLVM is designed. Frontend parses the source into LLVM IR, I
 
 ## LLVM IR
 
-LLVM IR is a low-level intermediate representation used by the LLVM compiler framework. LLVM has static single assignment form ([SSA](https://en.wikipedia.org/wiki/Static_single-assignment_form)). GCC also has IR called GIMPLE but it is not easy to work with as it's more tighly coupled to the compiler implementation. LLVM also has a great API(s) available in different programming langauges via libraries which makes it a delight to work with.
+LLVM IR is a low-level intermediate representation used by the LLVM compiler framework. LLVM has a static single assignment form ([SSA](https://en.wikipedia.org/wiki/Static_single-assignment_form)). GCC also has IR called GIMPLE, but it is not easy to work with as it's more tightly coupled to the compiler implementation. LLVM also has a great API(s) available in different programming languages via libraries which makes it a delight to work with.
 
 ### IR Structure 
 
@@ -34,13 +34,13 @@ Let's take a highly simplified look into how LLVM IR is structured. In general, 
 ![alt text](https://i.imgur.com/6cBlRWh.png)
 
 #### Module
-Module is the outermost container of the IR. Module contains target information, It contains symbol, Global variables, Function declarations, function definition and other things (not relevant to current discussion). Most commonly modules are created per source file. Target information just a long string which describes target for the IR.
+Module is the outermost container of the IR. Module contains target information, symbols, Global variables, Function declarations, function definition and other things (not relevant to current discussion). Most commonly modules are created per source file. Target information just a long string which describes target for the IR.
 
 #### Function
 Function contains arguments, entry basic block and basic blocks.
 
 #### Basic Block
-Basic block contains labels, Instructions followed by termination instructor. Every basic block must end with a terminator. Terminator cannot appear anywhere else other than at the end of a Basic Block. These tell where the control of execution should go to when the reach the end of basic block. (most common one is `ret`)
+Basic block contains labels, Instructions followed by termination instructor. Every basic block must end with a terminator. Terminator cannot appear anywhere else other than at the end of a Basic Block. These tell where the control of execution should go to when it reaches the end of basic block. (most common one is `ret`)
 
 Let's take a look at LLVM IR for the following C code snipped which squares and adds two integer
 
@@ -96,7 +96,7 @@ LLVM identifiers come in two types
 - Global identifiers (functions, global variables) begin with the `'@'` character.
 - Local identifiers (register names, types) begin with the `'%'` character. 
 
-This in this example `%mul1 = mul nsw i32 %2, %3` is actually addition of two 32-bit integer which is stored in `%mul1` virtual register. There can be unlimited number of these virtual register unlike any real world CPU. LLVM automatically maps these registers to target register during IR to object compilation.
+This in this example `%mul1 = mul nsw i32 %2, %3` is actually an addition of two 32-bit integer which is stored in `%mul1` virtual register. There can be an unlimited number of these virtual registers unlike any real world CPU. LLVM automatically maps these registers to target registers during IR to object compilation.
 
 Let's take a look at these instructions
 
@@ -148,7 +148,7 @@ The ‘`ret`’ instruction is used to return control flow (and optionally a val
 ret i32 %add
 ```
 
-In this example, we return 32-bit integer stored in `%add` register back to caller. 
+In this example, we return a 32-bit integer stored in `%add` register back to the caller. 
 
 
 ### Hello world in IR 
@@ -171,7 +171,7 @@ Writing a hello world is not too different from what we'd do in C. First we decl
 
 We declare external `puts` function which will be resolved in linking step when this function will be mapped to c library by the linker.
 
-Then we define main function which returns integer very much like our usual C programs. On the first line we use the infamous GEP instruction to get the address to the first byte of our array. Once we get that, we store the pointer in `%str` register and call the external `puts` function and return from the function with value `0`.
+Then we define the main function which returns an integer very much like our usual C programs. On the first line we use the infamous GEP instruction to get the address to the first byte of our array. Once we get that, we store the pointer in `%str` register and call the external `puts` function and return from the function with value `0`.
 
 The `getelementptr` a/k/a `GEP` instruction is used to get the address of a subelement of an aggregate data structure. It's like `lea` instruction in x86 assembly. The first argument is always a type used as the basis for the calculations. The second argument is always a pointer or a vector of pointers, and is the base address to start from. The remaining arguments (if any) are indices that indicate which of the elements of the aggregate object are indexed.
 
@@ -190,7 +190,7 @@ Now we can move onto implementing brainfuck compiler
 
 # What is BrainFuck?
 
-Brainfuck is a programming language which just has 8 instructions. A brainfuck program contains these 8 characters and optionally extra characters which is usually ignored as comments.  The instrunctions are executed one by one starting from the first instruction in the command till the end.
+Brainfuck is a programming language which just has 8 instructions. A brainfuck program contains these 8 characters and optionally extra characters which are usually ignored as comments.  The instructions are executed one by one starting from the first instruction in the command till the end.
 
 The model has a one-dimensional array of 30,000 cells initialized to 0, a data pointer which points as index in this array of cell, instruction pointer, an io stream to read input and write output.
 
@@ -207,7 +207,7 @@ The eight language commands each consist of a single character:
 - `[` If the byte at the data pointer is zero, then instead of moving the instruction pointer forward to the next command, jump it forward to the command after the _matching_ `]` command.
 - `]` If the byte at the data pointer is nonzero, then instead of moving the instruction pointer forward to the next command, jump it _back_ to the command after the _matching_ `[` command.
 
-Since the language is very simple, writing an interpreter is not too difficult. You can find link to my interpreter [here](https://github.com/spl0i7/gollvm-bf/blob/main/interpreter/main.go)I will use the design of interpreter to write the compiler
+Since the language is very simple, writing an interpreter is not too difficult. You can find link to my interpreter [here](https://github.com/spl0i7/gollvm-bf/blob/main/interpreter/main.go). I will use the design of interpreter to write the compiler
 
 
 # Crafting the Compiler
@@ -318,7 +318,7 @@ case '+':
 ```
 
 ##  Implementing '-'
-This one is same as `+`  but we just decrement the value instead of adding.
+This one is the same as `+`  but we just decrement the value instead of adding.
 
 ```go
 
@@ -473,11 +473,11 @@ Full source code [here](https://github.com/spl0i7/gollvm-bf/blob/main/compiler/m
 | tower of hanoi (hanoi.bf)    | 11.47 millis            | 31.85 secs        |
 | hello world (hello-world.bf) | 6.19 millis             | 213.93 millis     |
 
-As expected compiler version is orders of magnitude faster than the interpreter. One interesting thing I observed in the tower of hanoi program was that optimizer basically ran the whole program at the compile time and just printed the final state of the tower with `-O3` flag which of-course is incredibly fast. We cannot even see disk moving if we use `-O3` flag which is mind-blowing level of optimization.
+As expected, compiler version is orders of magnitude faster than the interpreter. One interesting thing I observed in the tower of hanoi program was that the optimizer basically ran the whole program at the compile time and just printed the final state of the tower with `-O3` flag which of-course is incredibly fast. We cannot even see the disks moving if we use the `-O3` flag which is a mind-blowing level of optimization.
 
 # Closing thoughts
 
-I think LLVM is an amazing framework and makes building compiler as simple as it can get. Go's LLVM library is also very ergonomic to work with but many function just panic instead of returning an error properly which is not very pleasant especially because most tricky part of writing a compiler is giving well-formed error messages to the user. Apart from this, it was enjoying experience to use this library.
+I think LLVM is an amazing framework and makes building a compiler as simple as it can get. Go's LLVM library is also very ergonomic to work with but many functions just panic instead of returning an error properly which is not very pleasant especially because the most tricky part of writing a compiler is giving well-formed error messages to the user. Apart from this, I enjoyed the experience of using this library.
 
 
 # References
