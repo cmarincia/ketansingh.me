@@ -54,7 +54,7 @@ int square_add(int a, int b) {
 }
 ```
 
-```c
+```llvm
 define i32 @square_add(i32 %a, i32 %b) {
 
 entry:
@@ -109,7 +109,7 @@ The `alloca` instruction is used to allocate memory on the stack of the current 
 %a.addr = alloca i32
 ```
 
-This instruction allocates space for a 32 bit signed integer on the stack. The pointer is stored in the register `%a.addr`.
+This instruction allocates space for a 32-bit signed integer on the stack. The pointer is stored in the register `%a.addr`.
 
 ### `store` 
 
@@ -119,7 +119,7 @@ The `store` instruction is used to write a value to memory
 store i32 %mul1, i32* %b.addr
 ```
 
-Here we tell LLVM to store a 32 bit integer from `%mul1` register into the register `%b.addr` which is a pointer to 32-bit integer. 
+Here we tell LLVM to store a 32-bit integer from `%mul1` register into the register `%b.addr` which is a pointer to 32-bit integer. 
 
 ### `load` 
 
@@ -303,6 +303,7 @@ This forms the basic boilerplate we can now start implementing the language inst
 To implement `+` instruction we need to get the cell pointed to by `dataPtr` index. Add one to it and then store it back in the array.
 
 ```go
+
 case '+':  
 
 // get the dataPtr th index in the array
@@ -320,6 +321,7 @@ case '+':
 This one is same as `+`  but we just decrement the value instead of adding.
 
 ```go
+
 case '-':  
 
 // get the dataPtr th index in the array
@@ -337,6 +339,7 @@ case '-':
 This instruction is also very straightforward. We just load the `dataPtr` into a register, add one to it. Store this new value back in the `dataPtr` memory location.
 
 ```go
+
 case '>':  
 
 // increment the datapointer by one
@@ -350,6 +353,7 @@ case '>':
 This one is same as `>`, we just decrement the `dataPtr` by 1 instead of adding.
 
 ```go
+
 case '<':  
 
 // decrement the datapointer by one
@@ -365,6 +369,7 @@ For `[` instruction we use a stack to keep track of current loop block (just lik
 Note that we've created two new blocks to denote body and end of the loop by creating new basic block. We did not name them explicitly (they will automatically be named). 
 
 ```go
+
 case '[':
 // get a pointer to cell pointed by dataPtr index
 	ptr := builder.NewGetElementPtr(arrayType, cellMemory, constant.NewInt(types.I64, 0), builder.NewLoad(types.I64, dataPtr)) 
@@ -428,6 +433,7 @@ case ']':
 This just involves calling `getchar()` and storing the result in the array at an index pointed by `dataptr`
 
 ```go
+
 case ',':  
 // call getchar()
    char := builder.NewCall(getchar)  
@@ -442,6 +448,7 @@ case ',':
 ## Implement '.'
 
 ```go
+
 case '.':  
 // get the pointer to current cell in the array
    ptr := builder.NewGetElementPtr(arrayType, cellMemory, constant.NewInt(types.I64, 0), builder.NewLoad(types.I64, dataPtr)) 
