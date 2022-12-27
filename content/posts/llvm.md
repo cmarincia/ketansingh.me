@@ -473,5 +473,13 @@ As expected compiler version is orders of magnitude faster than the interpreter.
 I think LLVM is an amazing framework and makes building compiler as simple as it can get. Go's LLVM library is also very ergonomic to work with but many function just panic instead of returning an error properly which is not very pleasant especially because most tricky part of writing a compiler is giving well-formed error messages to the user. Apart from this, it was enjoying experience to use this library.
 
 
+# References
 
+- http://aosabook.org/en/llvm.html
+- https://esolangs.org/wiki/Brainfuck
+- https://llvm.org/docs/LangRef.html
+- https://github.com/llir/llvm
+- https://mukulrathi.com/create-your-own-programming-language/llvm-ir-cpp-api-tutorial/
+- https://blog.yossarian.net/2020/09/19/LLVMs-getelementptr-by-example
+- https://www.youtube.com/watch?v=m8G_S5LwlTo
 
