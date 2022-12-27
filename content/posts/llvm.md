@@ -105,7 +105,7 @@ Let's take a look at these instructions
 The `alloca` instruction is used to allocate memory on the stack of the current function which is then automatically freed when this function returns. This is exactly same as how local variable behave in C like programming languages
 
 
-```
+```llvm
 %a.addr = alloca i32
 ```
 
@@ -115,7 +115,7 @@ This instruction allocates space for a 32-bit signed integer on the stack. The p
 
 The `store` instruction is used to write a value to memory
 
-```
+```llvm
 store i32 %mul1, i32* %b.addr
 ```
 
@@ -125,7 +125,7 @@ Here we tell LLVM to store a 32-bit integer from `%mul1` register into the regis
 
 The `load` instruction is used to read from memory.
 
-```
+```llvm
 %2 = load i32, i32* %b.addr
 ```
 
@@ -135,7 +135,7 @@ In the example above, we load 32-bit integer from the memory address `b.addr`. T
 
 `add`, `mul` instruction are used to perform arithmetic operation between two registers.
 
-```
+```llvm
 %add = add nsw i32 %4, %5
 ```
 
@@ -144,7 +144,7 @@ In this example we add two 32-bit integers in `%4` and `%5` register and store i
 ### ret 
 The ‘`ret`’ instruction is used to return control flow (and optionally a value) from a function.
 
-```
+```llvm
 ret i32 %add
 ```
 
@@ -153,7 +153,7 @@ In this example, we return 32-bit integer stored in `%add` register back to call
 
 ### Hello world in IR 
 
-```
+```llvm
 @msg = constant [12 x i8] c"hello world\00"
 
 declare i32 @puts(i8*)
@@ -177,12 +177,12 @@ The `getelementptr` a/k/a `GEP` instruction is used to get the address of a sube
 
 To run this program save the code in `hello-world.ll` file and compile it with `clang`
 
-```
+```bash
 $ clang hello-world.ll -O3 -o hello-world
 ```
 
 Then finally run the compiled program to see it in action, you should hopefully see `hello world` get printed out.
-```
+```bash
 $ ./hello-world
 ```
 
