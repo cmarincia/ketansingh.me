@@ -4,13 +4,13 @@ date: 2022-22-27T19:48:19+05:30
 description: "adventures with LLVM IR"
 ---
 
-Goal of this post is to take a brief look into LLVM infrastructure and LLVM IR, then using that knowledge to build a toy brainfuck compiler that emits IR which can then further be compiled into native executable by LLVM tools. You can find the full source code in this [repository](https://github.com/spl0i7/gollvm-bf)
+Goal of this post is to take a brief look into LLVM infrastructure and LLVM IR, then use that knowledge to build a toy brainfuck compiler that emits IR which can then further be compiled into native executable by LLVM tools. You can find the full source code in this [repository](https://github.com/spl0i7/gollvm-bf)
 
 # What is LLVM? 
 
 So what even is LLVM? LLVM Project is a compiler framework and collection of tools which can be used to build programming languages. In fact, LLVM is not a "single" project but is composed of multiple subprojects under the same umbrella which includes LLVM Core, Clang, LLDB, libc++, etc. By the way LLVM doesn't stands for anything, it's just LLVM. 
 
-Let's try to understand what a compiler is before we go into any further topics. Compiler is a program that translates a program from one language to another, most commonly to native machine language but not always necessarily. It can also translate from one high level language to another, those are sometimes called transpilers.
+Let's try to understand what a compiler is before we go into any further topics. Compiler is a program that translates a program from one language to another, most commonly from a high level language to native machine language. It can also translate from one high level language to another, those are sometimes called transpilers.
 
 ![design](https://i.imgur.com/eQjSgoG.png)
 
@@ -24,13 +24,13 @@ Typical compiler design includes
 
 This design has the advantage that each of these steps can be implemented independently of each other. For example, we can write different frontends for different programming languages which all output the same intermediate representation. Optimizer can be designed in such a way that it optimizes only IR which is going to be the same for all the languages. Similarly, backend can be designed to operate on IR as input and output code which is target specific. This way we end up with a really modular design which allows reusing different parts of the compiler for different programming languages without having to start from scratch for every new compiler. 
 
-This is kind of how LLVM is designed. Frontend parses the source into LLVM IR, IR is fed through optimizer(s) which is then fed into code generator to generate target output. IR is thus the interface to the LLVM compiler framework. This property means that all you need to know to write a front end for LLVM is IR and LLVM tools can then take over to build the final executable.
+This is how LLVM is designed as well. Frontend parses the source into LLVM IR, IR is fed through optimizer(s) which is then fed into code generator to generate target output. IR is thus the interface to the LLVM compiler framework. This property means that all you need to know to write a front end for LLVM is IR and LLVM tools can then take over to build the final executable.
 
 
 
 ## LLVM IR
 
-LLVM IR is a low-level intermediate representation used by the LLVM compiler framework. LLVM has a static single assignment ([SSA](https://en.wikipedia.org/wiki/Static_single-assignment_form)) form. GCC also has IR called GIMPLE, but it is not easy to work with as it's more tightly coupled to the compiler implementation. LLVM also has a great API(s) available in different programming languages via libraries which makes it a delight to work with.
+LLVM IR is a low-level intermediate representation used by the LLVM compiler framework. LLVM has a static single assignment ([SSA](https://en.wikipedia.org/wiki/Static_single-assignment_form)) form. GCC also has IR called GIMPLE, but it is not easy to work with as it's more tightly coupled to the compiler implementation. LLVM also has great API(s) available in different programming languages via libraries which makes it a delight to work with.
 
 ### IR Structure 
 
@@ -40,15 +40,15 @@ Let's take a highly simplified look into how LLVM IR is structured. In general, 
 ![alt text](https://i.imgur.com/6cBlRWh.png)
 
 #### Module
-Module is the outermost container of the IR. Module contains target information, symbols, global variables, function declarations, function definition and other things (not relevant to current discussion). Most commonly modules are created per source file. Target information just a long string which describes target for the IR.
+Module is the outermost container of the IR. Module contains target information, symbols, global variables, function declarations, function definition and other things (not relevant to current discussion). Most commonly modules are created per source file. Target information is just a long string which describes target the for the IR.
 
 #### Function
-Function contains arguments, entry basic block and basic blocks.
+Function contain arguments, entry basic block and one or more basic blocks.
 
 #### Basic Block
-Basic block contains labels, instructions followed by termination instruction. Every basic block must end with a terminator. Terminator cannot appear anywhere else other than at the end of a basic block. These tell where the control of execution should go to when it reaches the end of basic block. (most common one is `ret`)
+Basic block contains labels, instructions followed by termination instruction. Every basic block must end with a terminator. Terminator cannot appear anywhere else other than at the end of a basic block. These tell where the control of execution should go when it reaches the end of basic block. (most common one is `ret`)
 
-Let's take a look at LLVM IR for the following C code snippet which squares and adds two integer
+Let's take a look at LLVM IR for the following C code snippet which squares and adds two integers
 
 ```c
 int square_add(int a, int b) {
@@ -94,21 +94,21 @@ entry:
 ```
 [Godbolt](https://godbolt.org/z/qnE6nj91j) (I've cleaned up the example to make it easier to read)
 
-That looks like C style assembly hybrid and that's kind of what it is. Let's try to go through what all this generated code means. There's a function declaration in first line which tells us type this function will be returning, then it's name `square_add` (I changed the name from generated output to explain better) and then finally arguments with their specified data types.
+That looks like C style assembly hybrid and that's kind of what it is. Let's try to go through what all this generated code means. There's a function declaration in first line which tells us datatype this function will be returning, then it's name `square_add` (I changed the name from generated output to explain better) and then finally arguments with their specified data types.
 
-This function then contains a bunch of instructions to compute values from the gives arguments. In this example we see few of them as `add`, `mul`, `ret`, `alloca`, `load`, `store`.
+This function contains a bunch of instructions to compute values from the given arguments. In this example we see few of them as `add`, `mul`, `ret`, `alloca`, `load`, `store`.
 
 LLVM identifiers come in two types
 - Global identifiers (functions, global variables) begin with the `'@'` character.
 - Local identifiers (register names, types) begin with the `'%'` character. 
 
-In this example `%mul1 = mul nsw i32 %2, %3` is actually a multiplication of two 32-bit integer which is stored in `%mul1` virtual register. There can be an unlimited number of these virtual registers unlike any real world CPU. LLVM automatically maps these registers to target registers during IR to object compilation.
+In this example `%mul1 = mul nsw i32 %2, %3` is actually the multiplication of two 32-bit integers which is stored in `%mul1` virtual register. There can be an unlimited number of these virtual registers unlike any real world CPU. LLVM automatically maps these registers to target registers during IR to object compilation.
 
 Let's take a look at these instructions
 
 ### `alloca` 
 
-The `alloca` instruction is used to allocate memory on the stack of the current function which is then automatically freed when this function returns. This is exactly same as how local variable behave in C like programming languages
+The `alloca` instruction is used to allocate memory on the stack of the current function, which is then automatically freed when this function returns. This is exactly same as how local variable behave in C like programming languages
 
 
 ```llvm
@@ -173,7 +173,7 @@ define i32 @main() {
 
 ```
 
-Writing a hello world is not too different from what we'd do in C. First we declare a i8 array of size 12 and initialize it with a value "hello world" with null terminator.
+Writing a hello world is not too different from what we do in C. First we declare a i8 array of size 12 and initialize it with a value "hello world" with null terminator.
 
 We declare external `puts` function which will be resolved in linking step when this function will be mapped to c library by the linker.
 
@@ -213,7 +213,7 @@ The eight language commands each consist of a single character:
 - `[` If the byte at the data pointer is zero, then instead of moving the instruction pointer forward to the next command, jump it forward to the command after the matching `]` command.
 - `]` If the byte at the data pointer is nonzero, then instead of moving the instruction pointer forward to the next command, jump it back to the command after the matching `[` command.
 
-Since the language is very simple, writing an interpreter is not too difficult. You can find link to my interpreter [here](https://github.com/spl0i7/gollvm-bf/blob/main/interpreter/main.go). I will use the design of interpreter to write the compiler
+Since the language is very simple, writing an interpreter is not too difficult. You can find link to my interpreter [here](https://github.com/spl0i7/gollvm-bf/blob/main/interpreter/main.go). We will be using the design of interpreter to write the compiler
 
 
 # Crafting the Compiler
@@ -480,11 +480,11 @@ Full source code [here](https://github.com/spl0i7/gollvm-bf/blob/main/compiler/m
 | tower of hanoi (hanoi.bf)    | 11.47 millis            | 31.85 secs        |
 | hello world (hello-world.bf) | 6.19 millis             | 213.93 millis     |
 
-As expected, compiled version is orders of magnitude faster than the program ran on interpreter. One interesting thing I observed in the tower of hanoi program was that the optimizer basically ran the whole program at the compile time and just printed the final state of the tower when compiled with `-O3` flag which of-course is incredibly fast. We cannot even see the disks moving if we use the `-O3` flag which is a mind-blowing level of optimization.
+As expected, compiled version is orders of magnitude faster than the program ran on interpreter. One interesting thing I observed in the tower of hanoi program was that the optimizer basically ran the whole program at the compile time in the executable it just prints the final state of the towers if compiled with `-O3` flag,  We cannot even see the disks moving which is a remarkable level of optimization.
 
 # Closing thoughts
 
-I think LLVM is an amazing framework and makes building a compiler as straightforward as it can get. Go's LLVM library is also very ergonomic to work with but many functions just panic instead of returning an error properly which is not very pleasant especially because the most tricky part of writing a compiler is giving well-formed error messages to the user. Apart from this, It was a fun experience to try using LLVM.
+I think LLVM is an amazing framework and process of building a compiler with it is straightforward as it can get. Go's LLVM library is also very ergonomic to work with but many functions just panic instead of returning an error properly which is not very pleasant specially because the most tricky part of writing a good compiler is giving well-formed error messages to the user (wink wink rustc). Apart from this, It was a fun experience to use LLVM.
 
 
 # References
