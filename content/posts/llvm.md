@@ -2,7 +2,7 @@ Goal of this post is to take a brief look into LLVM infrastructure and LLVM IR, 
 
 # What is LLVM? 
 
-So what even is LLVM? LLVM Project is a compiler framework and collection of tools which can be used to used to build programming languages. In fact, LLVM is not a "single" project but is compose of multiple sub projects under the same umbrella which includes LLVM Core, Clang, LLDB, libc++, etc. By the way LLVM doesn't stands for anything, it's just LLVM. 
+So what even is LLVM? LLVM Project is a compiler framework and collection of tools which can be used to build programming languages. In fact, LLVM is not a "single" project but is composed of multiple subprojects under the same umbrella which includes LLVM Core, Clang, LLDB, libc++, etc. By the way LLVM doesn't stands for anything, it's just LLVM. 
 
 Let's try to understand what a compiler is before we go into any further topics. Compiler is a program that translates a program from one language to another, most commonly to native machine language but not always necessarily. It can also translate from one high level language to another, those are called transpilers. 
 
@@ -10,13 +10,13 @@ Let's try to understand what a compiler is before we go into any further topics.
 
 Typical compiler design includes 
 
-- **Frontend** - Tokensizes the code, parses, checks for errors,  converts to AST (Abstract Syntax Tree) and optionally intermediate output called IR (intermediate representation)
+- **Frontend** - Tokenizes the code, parses, checks for errors,  converts to AST (Abstract Syntax Tree) and optionally intermediate output called IR (intermediate representation)
 
 - **Optimizer** - Does it's magic to optimize the code
 
 - **Backend** - Generate the final output depending on the compilation target (os, architecture, etc)
 
-This design has a advantage that each of these steps can be implemented independently of each other. For example we can write different frontend for different programming languages which all output same intermediate representation. Optimizer can be designed in such a way that it optimizes only IR which is going to be same for all the language. Similarliy backend can be designed to operate on IR as input and output code which dependens on target. This way we end up reusing different part of compiler for different programming languages without having to start from scratch for every new compiler. 
+This design has a advantage that each of these steps can be implemented independently of each other. For example we can write different frontend for different programming languages which all output same intermediate representation. Optimizer can be designed in such a way that it optimizes only IR which is going to be same for all the language. Similarly backend can be designed to operate on IR as input and output code which is dependent on target. This way we end up reusing different part of compiler for different programming languages without having to start from scratch for every new compiler. 
 
 This is kind of how LLVM is designed. Frontend parses the source into LLVM IR, IR is fed through optimizer(s) which is then fed into code generator to generate target output. IR is thus the interface to the LLVM compiler framework. This property means that all you need to know to write a front end for LLVM is IR and LLVM tools can then take over to build the final executable.
 
@@ -28,21 +28,21 @@ LLVM IR is a low-level intermediate representation used by the LLVM compiler fra
 
 ### IR Structure 
 
-Let's take a highly simplified look into how LLVM IR is structured. In general it takes the following form
+Let's take a highly simplified look into how LLVM IR is structured. In general, it takes the following form
 
 
 ![alt text](https://i.imgur.com/6cBlRWh.png)
 
 #### Module
-Module is the outermost container of the IR. Module contains target information, It contains symbol, Global variables, Function declartions, function fefinition and other things (not relevant to current discussion). Most commonly modules are created per source file. Target information just a long string which describes target for the IR.
+Module is the outermost container of the IR. Module contains target information, It contains symbol, Global variables, Function declarations, function definition and other things (not relevant to current discussion). Most commonly modules are created per source file. Target information just a long string which describes target for the IR.
 
 #### Function
-Functions contains arguments, entry basic block and basic blocks.
+Function contains arguments, entry basic block and basic blocks.
 
 #### Basic Block
-Basic block contains labels, Instructions followed by termination instructor. Every basic block must end with a terminator. Terminator cannot appear anywhere else other than at the end of a Basic Block. These tell where the control of execution should go to when the we reach the end of basic block. (most common one is `ret`)
+Basic block contains labels, Instructions followed by termination instructor. Every basic block must end with a terminator. Terminator cannot appear anywhere else other than at the end of a Basic Block. These tell where the control of execution should go to when the reach the end of basic block. (most common one is `ret`)
 
-Let's a look at LLVM IR for the following C code snipped which squares and adds two integer
+Let's take a look at LLVM IR for the following C code snipped which squares and adds two integer
 
 ```c
 int square_add(int a, int b) {
@@ -96,9 +96,9 @@ LLVM identifiers come in two types
 - Global identifiers (functions, global variables) begin with the `'@'` character.
 - Local identifiers (register names, types) begin with the `'%'` character. 
 
-This in this example `%mul1 = mul nsw i32 %2, %3` is actually addition of two 32 bit integer which is stored in `%mul1` virtual register. There can be unlimited number of these virtual register unlike any real world CPU. LLVM automatically maps these registers to target register during IR to object compilation.
+This in this example `%mul1 = mul nsw i32 %2, %3` is actually addition of two 32-bit integer which is stored in `%mul1` virtual register. There can be unlimited number of these virtual register unlike any real world CPU. LLVM automatically maps these registers to target register during IR to object compilation.
 
-Let's take a look at these instruction 
+Let's take a look at these instructions
 
 ### `alloca` 
 
@@ -119,7 +119,7 @@ The `store` instruction is used to write a value to memory
 store i32 %mul1, i32* %b.addr
 ```
 
-Here we tell LLVM to store a 32 bit integer from `%mul1` register into the register `%b.addr` which is a pointer to 32 bit integer. 
+Here we tell LLVM to store a 32 bit integer from `%mul1` register into the register `%b.addr` which is a pointer to 32-bit integer. 
 
 ### `load` 
 
@@ -129,7 +129,7 @@ The `load` instruction is used to read from memory.
 %2 = load i32, i32* %b.addr
 ```
 
-In the example above, we load 32 bit integer from the memory address `b.addr`. This value is stored into the register `%2`.
+In the example above, we load 32-bit integer from the memory address `b.addr`. This value is stored into the register `%2`.
 
 ### add / mul 
 
@@ -139,7 +139,7 @@ In the example above, we load 32 bit integer from the memory address `b.addr`. T
 %add = add nsw i32 %4, %5
 ```
 
-In this example we add two 32 bit integers in `%4` and `%5` register and store it's result in `%add` register.
+In this example we add two 32-bit integers in `%4` and `%5` register and store its result in `%add` register.
 
 ### ret 
 The ‘`ret`’ instruction is used to return control flow (and optionally a value) from a function.
@@ -148,7 +148,7 @@ The ‘`ret`’ instruction is used to return control flow (and optionally a val
 ret i32 %add
 ```
 
-In this example, we return 32 bit integer stored in `%add` register back to caller. 
+In this example, we return 32-bit integer stored in `%add` register back to caller. 
 
 
 ### Hello world in IR 
@@ -171,7 +171,7 @@ Writing a hello world is not too different from what we'd do in C. First we decl
 
 We declare external `puts` function which will be resolved in linking step when this function will be mapped to c library by the linker.
 
-Then we define main function which returns integer very much like our usual C programs. On the first line we use the infamous GEP instrunction to get the address to the first byte of our array. Once we get that, we store the pointer in `%str` register and call the external `puts` function and return from the function with value `0`.
+Then we define main function which returns integer very much like our usual C programs. On the first line we use the infamous GEP instruction to get the address to the first byte of our array. Once we get that, we store the pointer in `%str` register and call the external `puts` function and return from the function with value `0`.
 
 The `getelementptr` a/k/a `GEP` instruction is used to get the address of a subelement of an aggregate data structure. It's like `lea` instruction in x86 assembly. The first argument is always a type used as the basis for the calculations. The second argument is always a pointer or a vector of pointers, and is the base address to start from. The remaining arguments (if any) are indices that indicate which of the elements of the aggregate object are indexed.
 
@@ -247,7 +247,7 @@ func main() {
 }
 ```
 
-But before implementing instructions, we need few boilerplate code in place. We need to declare few function from the C standard library which will be used in this program for input/output and initializing the cell memory as 0.
+But before implementing instructions, we need some boilerplate code in place. We need to declare few function from the C standard library which will be used in this program for input/output and initializing the cell memory as 0.
 
 ```go
 
@@ -267,11 +267,11 @@ builder := entryPoint.NewBlock("")
 
 - `getchar()` -  function reads a single character from stdin and returns that character to the caller. This will be used to read from stdin to cell memory.
 - `putchar()` - function writes a character to the stdout. This will be used to output the character to stdout in a memory cell.
-- `memset()` - function writes `len` bytes of `val` to the string `ptr`. We will use this to inirialize the cell memory to 0 at the start of the program.
+- `memset()` - function writes `len` bytes of `val` to the string `ptr`. We will use this to initialize the cell memory to 0 at the start of the program.
 
-Once we have these basic functions, we declare the `main` function for our program and we add a unnamed block in our source code. This block is where rest of our code will live. 
+Once we have these basic functions, we declare the `main` function for our program, and we add an unnamed block in our source code. This block is where rest of our code will live. 
 
-Next we allocate space for a byte array of 30,000 cells, allocate space for data pointer which will be used as index for that array. Then we initialize both with 0. For array we call the `memset()` and set the value to zero. For the pointer variable we just store 0 constant there.
+Next we allocate space for a byte array of 30,000 cells, allocate space for data pointer which will be used as index for that array. Then we initialize both with 0. For array, we call the `memset()` and set the value to zero. For the pointer variable we just store 0 constant there.
 
 ```go
 // type of array:  [30000 x i8]
@@ -300,7 +300,7 @@ builder.NewCall(memset,
 This forms the basic boilerplate we can now start implementing the language instructions.
 
 ##  Implementing '+'
-To implement `+` instrunction we need to get the cell pointed to by `dataPtr` index. Add one to it and then store it back in the array.
+To implement `+` instruction we need to get the cell pointed to by `dataPtr` index. Add one to it and then store it back in the array.
 
 ```go
 case '+':  
@@ -395,7 +395,7 @@ case '[':
 ```
 ## Implementing ']'
 
-For `]` instruction we pop from stack to get the last occourance of `[` instruction because if current cell value is not zero then we have to jump to there.  Ofcouse we expect stack to be not empty and if it is empty it means that we have excess number if `]` compared to `[`
+For `]` instruction we pop from stack to get the last occurrence of `[` instruction because if current cell value is not zero then we have to jump to there. Ofcourse we expect stack to be not empty and if it is empty it means that we have excess number if `]` compared to `[`
 ```go
 
 case ']':
@@ -450,7 +450,7 @@ case '.':
    builder.NewCall(puts, builder.NewLoad(types.I8, ptr))
 ```
 
-This covers all the instrunction in the language spec. Now we just finally we add a terminator instrunction to end our main function.
+This covers all the instruction in the language spec. Now we just finally we add a terminator instruction to end our main function.
 
 ```go
 builder.NewRet(constant.NewInt(types.I32, 0))
@@ -466,11 +466,11 @@ Full source code [here](https://github.com/spl0i7/gollvm-bf/blob/main/compiler/m
 | tower of hanoi (hanoi.bf)    | 11.47 millis            | 31.85 secs        |
 | hello world (hello-world.bf) | 6.19 millis             | 213.93 millis     |
 
-As expected compiler version is orders of magnitude faster than the interpreter. One interesting thing I obseved in the tower of hanoi program was that optimizer basically ran the whole program at the compile time and just printed the final state of the tower with `-O3` flag which ofcourse is incredibly fast and mindblowing. We cannot even see disk moving if we use `-O3` flag which is mind blowing level of optimization.
+As expected compiler version is orders of magnitude faster than the interpreter. One interesting thing I observed in the tower of hanoi program was that optimizer basically ran the whole program at the compile time and just printed the final state of the tower with `-O3` flag which of-course is incredibly fast. We cannot even see disk moving if we use `-O3` flag which is mind-blowing level of optimization.
 
 # Closing thoughts
 
-I think LLVM is an amazing framework and makes building compiler as simple as it can get. Go's LLVM library is also very ergronimic to work with but many function just panic instead of returning an error properly which is not very pleasant espically because most tricky part of writing a compiler is giving well formed error messages to the user. Apart from this, it was enjoying experience to use this library.
+I think LLVM is an amazing framework and makes building compiler as simple as it can get. Go's LLVM library is also very ergonomic to work with but many function just panic instead of returning an error properly which is not very pleasant especially because most tricky part of writing a compiler is giving well-formed error messages to the user. Apart from this, it was enjoying experience to use this library.
 
 
 
