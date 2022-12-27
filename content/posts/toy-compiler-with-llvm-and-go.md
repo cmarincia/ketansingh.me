@@ -1,6 +1,6 @@
 ---
 title: "Writing a toy compiler with Go and LLVM"
-date: 2022-22-27T19:48:19+05:30
+date: 2022-12-27T22:17:47+05:30
 description: "adventures with LLVM IR"
 ---
 
